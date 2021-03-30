@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TestProjectKotlin</string>
+    <string name="select_category">Select Category</string>
+    <string name="click_to_add_images">Click + to add images</string>
 </resources>

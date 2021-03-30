@@ -1,22 +1,32 @@
 package testproject.kotlin
 
-import android.content.ClipData
+import android.app.DatePickerDialog
+import android.app.DatePickerDialog.OnDateSetListener
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isEmpty
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import testproject.kotlin.Data.GetDataViewModel
+import testproject.kotlin.Data.Utils
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
 
@@ -25,13 +35,30 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
     private val REQUEST_PERMISSION = 1001
     private val OPEN_GALLERY = 1002
     private var selectedCategory = ""
+    val myCalendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val date =
+            OnDateSetListener { view, year, monthOfYear, dayOfMonth -> // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year)
+                myCalendar.set(Calendar.MONTH, monthOfYear)
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                updateLabel()
+            }
+
+        expiry_date.setOnClickListener {
+            DatePickerDialog(
+                this@MainActivity, date, myCalendar[Calendar.YEAR], myCalendar[Calendar.MONTH],
+                myCalendar[Calendar.DAY_OF_MONTH]
+            ).show()
+        }
+
         imageAadpter = AdapterImage(this, arrayListOf(), this)
-        recycler_view.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        recycler_view.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recycler_view.adapter = imageAadpter
 
         getDataViewModel = ViewModelProvider(this).get(GetDataViewModel::class.java)
@@ -53,8 +80,13 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
 
             spinner.adapter = adapter
 
-            spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
                     selectedCategory = _list[position]
                 }
 
@@ -65,7 +97,11 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
         })
 
         add_imz.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 openGallery()
             } else {
                 val permissions = arrayOf(
@@ -76,13 +112,60 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 ActivityCompat.requestPermissions(this, permissions, REQUEST_PERMISSION)
             }
         }
+
+        submit_text.setOnClickListener {
+            val catid: String = selectedCategory
+            val nameImage: String = name.text.toString()
+            val descImage: String = description.text.toString()
+            val expiryImage: String = expiry.text.toString()
+
+
+            if (recycler_view.isEmpty()) {
+                Snackbar.make(
+                    submit_text.rootView,
+                    "All fields are important",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            if (catid.isEmpty() || nameImage.isEmpty() || descImage.isEmpty() || expiryImage.isEmpty()) {
+                Snackbar.make(
+                    submit_text.rootView,
+                    "All fields are important",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+
+            var file = Utils.uriToFile(this@MainActivity, Uri.parse(imageAadpter.data[0]))
+
+            getDataViewModel.uploadImage(catid, nameImage, descImage, expiryImage, file)
+            Snackbar.make(
+                submit_text.rootView,
+                "Upload Image Successfully",
+                Snackbar.LENGTH_SHORT
+            ).show()
+            name.setText("")
+            expiry_date.text = ""
+            expiry_date.text = ""
+        }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_PERMISSION) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
                 openGallery()
             }
         }
@@ -109,7 +192,6 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                     list.add(data.clipData?.getItemAt(i)?.uri.toString())
                     Log.e("MULTIPLE", data.clipData?.getItemAt(i)?.uri.toString())
                 }
-
                 updateAdapter(list)
             } else {
                 Log.e("SINGLE", data?.data.toString())
@@ -120,9 +202,16 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
 
     private fun updateAdapter(_list: ArrayList<String>) {
         imageAadpter.updateMultipleData(_list)
+        if (imageAadpter.data.size > 0) no_images_tv.visibility = GONE
     }
 
-    override fun onRemoved(item: String) {
+    override fun onRemoved() {
+        if (imageAadpter.data.size == 0) no_images_tv.visibility = VISIBLE
+    }
 
+    private fun updateLabel() {
+        val myFormat = "yyyy:MM:dd hh:mm:ss"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+        expiry_date.text = sdf.format(myCalendar.time)
     }
 }

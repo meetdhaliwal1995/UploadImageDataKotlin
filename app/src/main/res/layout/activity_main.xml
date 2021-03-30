@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,7 +10,7 @@
         android:id="@+id/topbar_layout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/black"
+        android:background="@color/purple_700"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -22,7 +21,7 @@
             android:layout_marginStart="20dp"
             android:text="Add Product"
             android:textColor="#fff"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,23 +40,38 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
-        app:layout_constraintTop_toBottomOf="@id/topbar_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topbar_layout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                app:layout_constraintTop_toTopOf="parent"
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="130dp"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/no_images_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/click_to_add_images"
+                android:textColor="@color/teal_700"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/recycler_view"
+                app:layout_constraintEnd_toEndOf="@id/recycler_view"
+                app:layout_constraintTop_toTopOf="@id/recycler_view"
+                app:layout_constraintStart_toStartOf="@id/recycler_view"/>
 
             <TextView
                 android:id="@+id/text_category"
@@ -65,9 +79,9 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
                 android:gravity="start|center_vertical"
-                android:text="Categories"
-                android:textSize="16sp"
+                android:text="@string/select_category"
                 android:textColor="#fff"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recycler_view" />
 
@@ -75,27 +89,13 @@
                 android:id="@+id/spinner"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:background="@color/white"
                 android:layout_marginStart="20dp"
-                app:layout_constraintStart_toEndOf="@id/text_category"
+                android:background="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/text_category"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/text_category"
                 app:layout_constraintTop_toTopOf="@id/text_category" />
 
-            <EditText
-                android:id="@+id/cat_id"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:background="#E6E6E6"
-                android:hint="Category_id..."
-                android:inputType="text"
-                android:maxLines="1"
-                android:padding="10dp"
-                android:textColor="@color/black"
-                android:textColorHint="#494949"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/spinner" />
 
             <EditText
                 android:id="@+id/name"
@@ -110,7 +110,7 @@
                 android:textColor="@color/black"
                 android:textColorHint="#494949"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cat_id" />
+                app:layout_constraintTop_toBottomOf="@id/spinner" />
 
             <EditText
                 android:id="@+id/description"
@@ -127,20 +127,59 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name" />
 
-            <EditText
+            <TextView
                 android:id="@+id/expiry"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:focusable="false"
+                android:text="Expiry Date"
+                android:inputType="text"
+                android:maxLines="1"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/description" />
+
+            <TextView
+                android:id="@+id/expiry_date"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="20dp"
+                android:background="#E6E6E6"
+                android:focusable="false"
+                android:inputType="text"
+                android:hint="Pick a date..."
+                android:maxLines="1"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/black"
+                android:textColorHint="#494949"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/expiry"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/expiry"
+                app:layout_constraintTop_toTopOf="@id/expiry" />
+
+
+            <TextView
+                android:id="@+id/submit_text"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
-                android:background="#E6E6E6"
-                android:hint="Expiry..."
-                android:inputType="text"
-                android:maxLines="1"
-                android:padding="10dp"
-                android:textColor="@color/black"
-                android:textColorHint="#494949"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/description" />
+                android:background="@color/teal_700"
+                android:gravity="center"
+                android:text="Submit"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/expiry"
+                app:layout_constraintStart_toStartOf="@id/expiry"
+                app:layout_constraintTop_toBottomOf="@id/expiry" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

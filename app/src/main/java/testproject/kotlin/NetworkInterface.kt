@@ -1,14 +1,24 @@
 package testproject.kotlin
 
+import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 import testproject.kotlin.Data.GetCategories
+import testproject.kotlin.Data.UploadImage
 
 interface NetworkInterface {
 
     @GET("{endpoint}")
     fun getCategories(@Path(value = "endpoint", encoded = true) endpoint: String): Call<GetCategories>
+
+    @Multipart
+    @POST("{endpoint}")
+    fun imageUpload(
+        @Path(value = "endpoint" , encoded = true) endpoint: String,
+        @Part category_id: MultipartBody.Part?,
+        @Part name: MultipartBody.Part?,
+        @Part desc: MultipartBody.Part?,
+        @Part expiry: MultipartBody.Part?,
+        @Part product_image: MultipartBody.Part?
+    ): Call<UploadImage>
 }

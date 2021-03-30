@@ -34,11 +34,13 @@ class AdapterImage(private var context: Context, var data: ArrayList<String>, va
     fun removeItem(pos: Int) {
         data.removeAt(pos)
         notifyItemRemoved(pos)
+        callBack.onRemoved()
     }
+
 
     interface ItemCallBack {
 
-        fun onRemoved(item: String)
+        fun onRemoved()
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -46,7 +48,6 @@ class AdapterImage(private var context: Context, var data: ArrayList<String>, va
         init {
             itemView.remove_image.setOnClickListener {
                 removeItem(adapterPosition)
-                //callBack.onRemoved(data[adapterPosition])
             }
         }
     }
