@@ -19,16 +19,14 @@ class GetDataRepo {
         networkInterface.getCategories("xttest/get_categories.php").enqueue(object : Callback,
             retrofit2.Callback<GetCategories> {
             override fun onFailure(call: Call<GetCategories>, t: Throwable) {
-                Log.e("hello", t.localizedMessage);
+                Log.e("Failed", t.localizedMessage);
             }
 
             override fun onResponse(call: Call<GetCategories>, response: Response<GetCategories>) {
-
                 getAllCategories.value = response.body()?.categories
             }
-
         })
-            return list
-    }
 
+        return list
+    }
 }

@@ -3,7 +3,7 @@ package testproject.kotlin.Data
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-abstract class GetDataViewModel : ViewModel() {
+class GetDataViewModel : ViewModel() {
 
     var realAllCategories: MutableLiveData<List<CategoriesItem>>
 
