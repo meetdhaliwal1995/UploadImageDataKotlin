@@ -19,6 +19,6 @@ interface NetworkInterface {
         @Part name: MultipartBody.Part?,
         @Part desc: MultipartBody.Part?,
         @Part expiry: MultipartBody.Part?,
-        @Part product_image: MultipartBody.Part?
+        @Part product_image: List<MultipartBody.Part?>
     ): Call<UploadImage>
 }

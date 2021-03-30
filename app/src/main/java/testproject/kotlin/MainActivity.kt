@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import testproject.kotlin.Data.GetDataViewModel
 import testproject.kotlin.Data.Utils
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -96,6 +97,14 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
             }
         })
 
+        getDataViewModel.imageUploaded.observe(this, Observer {
+            Snackbar.make(
+                submit_text.rootView,
+                it.message,
+                Snackbar.LENGTH_SHORT
+            ).show()
+        })
+
         add_imz.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -133,22 +142,20 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 Snackbar.make(
                     submit_text.rootView,
                     "All fields are important",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                    Snackbar.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            val _files = arrayListOf<File>()
 
-            var file = Utils.uriToFile(this@MainActivity, Uri.parse(imageAadpter.data[0]))
+            imageAadpter.data.forEach {
+                _files.add(Utils.uriToFile(this@MainActivity, Uri.parse(it)))
+            }
 
-            getDataViewModel.uploadImage(catid, nameImage, descImage, expiryImage, file)
-            Snackbar.make(
-                submit_text.rootView,
-                "Upload Image Successfully",
-                Snackbar.LENGTH_SHORT
-            ).show()
+            Log.e("SIZEEE", _files.size.toString())
+            getDataViewModel.uploadImage(catid, nameImage, descImage, expiryImage, _files)
+
             name.setText("")
-            expiry_date.text = ""
             expiry_date.text = ""
         }
     }
@@ -156,8 +163,7 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+        grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_PERMISSION) {

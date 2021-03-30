@@ -40,32 +40,35 @@ class GetDataRepo {
         nAme: String,
         dEsc: String,
         eXpiry: String,
-        pRoduct_image: File
+        _pRoduct_images: ArrayList<File>
     ): MutableLiveData<UploadImage> {
         val upload = MutableLiveData<UploadImage>()
 
-        val requestBodyImage: RequestBody =
-            RequestBody.create("*/*".toMediaTypeOrNull(), pRoduct_image)
+        var _images = arrayListOf<MultipartBody.Part>()
+        var  counter = 0
+
+        _pRoduct_images.forEach {
+            Log.e("sds", it.name+ " -- " + counter.toString())
+            val requestBodyImage: RequestBody = RequestBody.create("*/*".toMediaTypeOrNull(), it)
+            val product_image = MultipartBody.Part.createFormData("product_image[$counter]", it.name, requestBodyImage)
+            _images.add(product_image)
+            counter++
+        }
 
         val category_id = MultipartBody.Part.createFormData("category_id", id)
         val name = MultipartBody.Part.createFormData("name", nAme)
         val desc = MultipartBody.Part.createFormData("desc", dEsc)
         val expiry = MultipartBody.Part.createFormData("expiry", eXpiry)
-        val product_image =
-            MultipartBody.Part.createFormData(
-                "product_image[0]",
-                pRoduct_image.name,
-                requestBodyImage
-            )
 
         val networkInterface = MyApp.getRetrofit().create(NetworkInterface::class.java)
+
         networkInterface.imageUpload(
             "xttest/save_user.php",
             category_id,
             name,
             desc,
             expiry,
-            product_image
+            _images
         ).enqueue(object : retrofit2.Callback<UploadImage> {
             override fun onResponse(call: Call<UploadImage>, response: Response<UploadImage>) {
                 Log.e("response", "pic upload")
