@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
     private lateinit var imageAadpter: AdapterImage
     private val REQUEST_PERMISSION = 1001
     private val OPEN_GALLERY = 1002
+    private var selectedCategory = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,8 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 _list.add(it.name)
             }
 
+            selectedCategory = _list[0]
+
             val adapter: ArrayAdapter<String> = ArrayAdapter(
                 applicationContext,
                 android.R.layout.simple_spinner_dropdown_item,
@@ -47,6 +52,16 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
             )
 
             spinner.adapter = adapter
+
+            spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    selectedCategory = _list[position]
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    selectedCategory = _list[0]
+                }
+            }
         })
 
         add_imz.setOnClickListener {
