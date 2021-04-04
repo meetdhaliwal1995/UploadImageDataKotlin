@@ -9,7 +9,8 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_layout.view.*
 import testproject.kotlin.Data.CategoriesItem
 
-class AdapterImage(private var context: Context, var data: ArrayList<String>, var callBack: ItemCallBack) : RecyclerView.Adapter<AdapterImage.MyViewHolder>() {
+class AdapterImage(private var context: Context, var data: ArrayList<String>, var callBack: ItemCallBack)
+    : RecyclerView.Adapter<AdapterImage.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.item_layout, parent, false)
@@ -28,6 +29,7 @@ class AdapterImage(private var context: Context, var data: ArrayList<String>, va
     fun updateMultipleData(list: List<String>) {
         val size = data.size
         data.addAll(list)
+
         notifyItemInserted(size)
     }
 
@@ -37,6 +39,11 @@ class AdapterImage(private var context: Context, var data: ArrayList<String>, va
         callBack.onRemoved()
     }
 
+    fun clearData() {
+        data.clear()
+        notifyDataSetChanged()
+        callBack.onRemoved()
+    }
 
     interface ItemCallBack {
 

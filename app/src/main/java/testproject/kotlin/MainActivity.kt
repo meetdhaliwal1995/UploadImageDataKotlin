@@ -36,14 +36,14 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
     private val REQUEST_PERMISSION = 1001
     private val OPEN_GALLERY = 1002
     private var selectedCategory = ""
-    val myCalendar = Calendar.getInstance()
+    val     myCalendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val date =
-            OnDateSetListener { view, year, monthOfYear, dayOfMonth -> // TODO Auto-generated method stub
+            OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, monthOfYear)
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 _list.add(it.name)
             }
 
-            selectedCategory = _list[0]
+            selectedCategory = items[0].id
 
             val adapter: ArrayAdapter<String> = ArrayAdapter(
                 applicationContext,
@@ -88,11 +88,11 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                     position: Int,
                     id: Long
                 ) {
-                    selectedCategory = _list[position]
+                    selectedCategory = items[position].id
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
-                    selectedCategory = _list[0]
+                    selectedCategory = items[0].id
                 }
             }
         })
@@ -103,6 +103,11 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 it.message,
                 Snackbar.LENGTH_SHORT
             ).show()
+
+            name.setText("")
+            expiry_date.text = ""
+            imageAadpter.clearData()
+            description.setText("")
         })
 
         add_imz.setOnClickListener {
@@ -126,8 +131,7 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
             val catid: String = selectedCategory
             val nameImage: String = name.text.toString()
             val descImage: String = description.text.toString()
-            val expiryImage: String = expiry.text.toString()
-
+            val expiryImage: String = expiry_date.text.toString()
 
             if (recycler_view.isEmpty()) {
                 Snackbar.make(
@@ -142,7 +146,8 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 Snackbar.make(
                     submit_text.rootView,
                     "All fields are important",
-                    Snackbar.LENGTH_SHORT).show()
+                    Snackbar.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
@@ -152,18 +157,21 @@ class MainActivity : AppCompatActivity(), AdapterImage.ItemCallBack {
                 _files.add(Utils.uriToFile(this@MainActivity, Uri.parse(it)))
             }
 
-            Log.e("SIZEEE", _files.size.toString())
+            Log.e("category_id", catid)
+            Log.e("name", nameImage)
+            Log.e("desc", descImage)
+            Log.e("expiry", expiryImage)
             getDataViewModel.uploadImage(catid, nameImage, descImage, expiryImage, _files)
 
-            name.setText("")
-            expiry_date.text = ""
+
         }
     }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_PERMISSION) {

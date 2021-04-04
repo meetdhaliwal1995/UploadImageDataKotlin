@@ -20,10 +20,8 @@ class GetDataViewModel : ViewModel() {
         repo.getCategoriesImage()
     }
 
-    fun uploadImage(
-        cat_id: String, nAme: String, dEsc:String, eXpiry: String,
-        productImage: ArrayList<File>
+    fun uploadImage(catid: String, nAme: String, dEsc:String, eXpiry: String, productImage: ArrayList<File>
     ){
-        repo.uplaodData(cat_id,nAme,dEsc,eXpiry,productImage)
+        repo.uplaodData(catid,nAme,dEsc,eXpiry,productImage)
     }
 }

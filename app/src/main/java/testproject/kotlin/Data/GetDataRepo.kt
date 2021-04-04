@@ -35,12 +35,7 @@ class GetDataRepo {
         return list
     }
 
-    fun uplaodData(
-        id: String,
-        nAme: String,
-        dEsc: String,
-        eXpiry: String,
-        _pRoduct_images: ArrayList<File>
+    fun uplaodData(id: String, nAme: String, dEsc: String, eXpiry: String, _pRoduct_images: ArrayList<File>
     ): MutableLiveData<UploadImage> {
         val upload = MutableLiveData<UploadImage>()
 
@@ -55,20 +50,18 @@ class GetDataRepo {
             counter++
         }
 
-        val category_id = MultipartBody.Part.createFormData("category_id", id)
-        val name = MultipartBody.Part.createFormData("name", nAme)
-        val desc = MultipartBody.Part.createFormData("desc", dEsc)
-        val expiry = MultipartBody.Part.createFormData("expiry", eXpiry)
+        val categoryid = RequestBody.create(okhttp3.MultipartBody.FORM, id)
+        val name = RequestBody.create(okhttp3.MultipartBody.FORM, nAme)
+        val desc = RequestBody.create(okhttp3.MultipartBody.FORM, dEsc)
+        val expiry = RequestBody.create(okhttp3.MultipartBody.FORM, eXpiry)
+//        val categoryid = MultipartBody.Part.createFormData("category_id", id)
+//        val name = MultipartBody.Part.createFormData("name", nAme)
+//        val desc = MultipartBody.Part.createFormData("desc", dEsc)
+//        val expiry = MultipartBody.Part.createFormData("expiry", eXpiry)
 
         val networkInterface = MyApp.getRetrofit().create(NetworkInterface::class.java)
 
-        networkInterface.imageUpload(
-            "xttest/save_user.php",
-            category_id,
-            name,
-            desc,
-            expiry,
-            _images
+        networkInterface.imageUpload("xttest/save_user.php", categoryid, name, desc, expiry, _images
         ).enqueue(object : retrofit2.Callback<UploadImage> {
             override fun onResponse(call: Call<UploadImage>, response: Response<UploadImage>) {
                 Log.e("response", "pic upload")
